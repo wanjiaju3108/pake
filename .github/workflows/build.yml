@@ -21,7 +21,7 @@ jobs:
           node-version: '22'
           cache: 'pnpm'
 
-      - name: Install Rust (both targets for universal build)
+      - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-apple-darwin,x86_64-apple-darwin
@@ -31,6 +31,11 @@ jobs:
 
       - name: Build Pake CLI
         run: pnpm run cli:build
+
+      - name: Add Intel (x86_64) target
+        run: |
+          rustup target add x86_64-apple-darwin
+          rustup target list --installed
 
       - name: Package the app
         run: |
