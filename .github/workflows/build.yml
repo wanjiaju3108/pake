@@ -1,0 +1,35 @@
+name: Build ShifangFM
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Pake source
+        uses: actions/checkout@v4
+        with:
+          repository: tw93/Pake
+          ref: master
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build CLI and package the app
+        run: |
+          npm install
+          npm run cli:build
+          node dist/cli.js "https://m.shifangfm.com" --name "荔课" --width 1280 --height 900
+
+      - name: Upload dmg
+        uses: actions/upload-artifact@v4
+        with:
+          name: ShifangFM-dmg
+          path: src-tauri/target/**/*.dmg
+          if-no-files-found: error
